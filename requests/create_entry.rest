@@ -1,0 +1,11 @@
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+    "title": "My awes45ome title",
+    "author": "Joh345n Doe",
+    "url": "https://www.goo4353gle.com",
+    "likes": 956
+}
+
+# Response:
