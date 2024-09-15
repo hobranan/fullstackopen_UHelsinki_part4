@@ -15,6 +15,7 @@ db.once("open", () => {
   logger.info("connected to MongoDB");
 });
 
+
 // const blogSchema = new mongoose.Schema({
 //   name: {
 //     type: String,
@@ -38,11 +39,15 @@ const blogSchema = new mongoose.Schema({
   author: String,
   url: String,
   likes: Number,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
 });
 blogSchema.set("toJSON", {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString(); // converts mongoDB's '_id' to our '.id'
-    // delete returnedObject._id;
+    delete returnedObject._id;
     delete returnedObject.__v;
   },
 });

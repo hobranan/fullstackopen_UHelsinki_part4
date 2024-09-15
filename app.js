@@ -19,6 +19,10 @@ app.use(express.static("dist")); // this is a 'static' middleware that serves st
 //* routes moved to controllers/person.js
 const blogsRouter = require("./controllers/blogs");
 app.use("/api/blogs", blogsRouter); // this is a 'Express router' middleware that uses the routes defined in 'controllers/person.js'
+const usersRouter = require("./controllers/users");
+app.use("/api/users", usersRouter); // this is a 'Express router' middleware that uses the routes defined in 'controllers/users.js'
+
+
 
 //* moved to index.js
 // app.listen(config.PORT, () => {

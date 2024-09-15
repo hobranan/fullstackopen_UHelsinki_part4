@@ -2,10 +2,22 @@ POST http://localhost:3003/api/blogs HTTP/1.1
 content-type: application/json
 
 {
-    "title": "My awes45ome title",
-    "author": "Joh345n Doe",
-    "url": "https://www.goo4353gle.com",
-    "likes": 956
+    "title": "My dfasdf",
+    "author": "Josdfe",
+    "url": "https://www.gooasdf53gle.com",
+    "likes": 44,
+    "userId": "66e73e9a42fa68a08fd78aa4"
 }
 
 # Response:
+
+
+###
+POST http://localhost:3003/api/users HTTP/1.1
+content-type: application/json
+
+{
+    "username": "root",
+    "name": "Superuser",
+    "password": "salainen"
+}
