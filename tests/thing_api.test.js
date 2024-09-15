@@ -86,6 +86,35 @@ test("post, check, then delete", async () => {
   assert.strictEqual(check2.status, 404); // 404 = not found
 });
 
+test("post, then update(put)", async () => {
+  const response = await api.post("/api/blogs").send({
+    title: "the update post",
+    author: "updatooooros",
+    url: "https://www.youneedupdate.com",
+    likes: 90,
+  });
+  const check_id = response.body.id;
+  assert.strictEqual(response.status, 201);
+  const check1 = await api.get("/api/blogs/" + check_id);
+  assert.strictEqual(check1.body.title, "the update post");
+  assert.strictEqual(check1.body.author, "updatooooros");
+  assert.strictEqual(check1.body.url, "https://www.youneedupdate.com");
+  assert.strictEqual(check1.body.likes, 90);
+
+  const response2 = await api.put("/api/blogs/" + check_id).send({
+    title: "the update post",
+    author: "updatooooros",
+    url: "https://www.youneedupdate.com",
+    likes: 999999, // update likes
+  });
+  assert.strictEqual(response2.status, 200);
+  const check2 = await api.get("/api/blogs/" + check_id);
+  assert.strictEqual(check2.body.title, "the update post");
+  assert.strictEqual(check2.body.author, "updatooooros");
+  assert.strictEqual(check2.body.url, "https://www.youneedupdate.com");
+  assert.strictEqual(check2.body.likes, 999999);
+});
+
 test("post to blogs with likes and without", async () => {
   const response1 = await api.post("/api/blogs").send({
     title: "test poster",
