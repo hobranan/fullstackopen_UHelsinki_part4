@@ -24,3 +24,4 @@ npm run dev
 ctrl+c
 npm install cross-env
 npm install supertest --save-dev
+npm install express-async-errors

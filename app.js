@@ -1,6 +1,7 @@
 //* declared libs and settings
 // require('dotenv').config() // Loads .env file contents into process.env by default
 const express = require("express");
+require('express-async-errors')
 const app = express();
 
 //* before-route middleware moved to utils/beforemiddleware.js (note: middleware happens in the order they are defined)
