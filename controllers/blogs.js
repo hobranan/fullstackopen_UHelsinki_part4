@@ -24,17 +24,18 @@ blogsRouter.get("/:id", async (request, response) => {
 // http://localhost:3003/api/blogs/66e4d4c879 for fail 400 example {"error":"malformatted id"}
 
 blogsRouter.post("/", async (request, response) => {
-  //   const body = request.body;
-  //   if (!body.name || !body.number) {
-  //     return response.status(400).json({
-  //       error: "name and/or number missing",
-  //     });
-  //   } // checks for more bad values like: null, undefined, NaN, empty string, 0, false
-  //   const entry = new Blog({
-  //     name: body.name,
-  //     number: body.number,
-  //   });
-  const entry = new Blog(request.body);
+    const body = request.body;
+    if (!body.title || !body.url) {
+      return response.status(400).json({
+        error: "title and/or url missing",
+      });
+    } // checks for more bad values like: null, undefined, NaN, empty string, 0, false
+    const entry = new Blog({
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes || 0, // if likes is missing, set it to 0
+    });
   const result = await entry.save();
   response.status(201).json(result);
 });
