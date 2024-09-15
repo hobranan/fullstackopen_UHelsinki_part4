@@ -26,3 +26,4 @@ npm install cross-env
 npm install supertest --save-dev
 npm install express-async-errors
 npm install bcrypt
+npm install jsonwebtoken

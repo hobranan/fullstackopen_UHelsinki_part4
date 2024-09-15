@@ -2,6 +2,15 @@ const blogsRouter = require("express").Router();
 const Blog = require("../models/blog"); // this is a 'mongoose' model that represents a blog in the phonebook
 const User = require("../models/user"); // this is a 'mongoose' model that represents a user in the phonebook
 
+const jwt = require('jsonwebtoken')
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+  return null
+}
+
 blogsRouter.get("/", async (request, response) => {
   const result = await Blog.find({}).populate("user", {
     username: 1,
@@ -30,11 +39,16 @@ blogsRouter.post("/", async (request, response) => {
       error: "title and/or url missing",
     });
   } // checks for more bad values like: null, undefined, NaN, empty string, 0, false
-  
+    
   // const user = await User.findById(body.userId)
-  const randomUser = await User.findOne(); // get the first user
-  const user = randomUser; // use the first user
-  
+  // const randomUser = await User.findOne(); // get the first user
+  // const user = randomUser; // use the first user
+  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  const user = await User.findById(decodedToken.id)
+
   const entry = new Blog({
     title: body.title,
     author: body.author,

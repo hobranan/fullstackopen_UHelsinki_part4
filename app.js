@@ -1,7 +1,7 @@
 //* declared libs and settings
 // require('dotenv').config() // Loads .env file contents into process.env by default
 const express = require("express");
-require('express-async-errors')
+require("express-async-errors");
 const app = express();
 
 //* before-route middleware moved to utils/beforemiddleware.js (note: middleware happens in the order they are defined)
@@ -21,8 +21,8 @@ const blogsRouter = require("./controllers/blogs");
 app.use("/api/blogs", blogsRouter); // this is a 'Express router' middleware that uses the routes defined in 'controllers/person.js'
 const usersRouter = require("./controllers/users");
 app.use("/api/users", usersRouter); // this is a 'Express router' middleware that uses the routes defined in 'controllers/users.js'
-
-
+const loginRouter = require("./controllers/login");
+app.use("/api/login", loginRouter); // this is a 'Express router' middleware that uses the routes defined in 'controllers/login.js'
 
 //* moved to index.js
 // app.listen(config.PORT, () => {
