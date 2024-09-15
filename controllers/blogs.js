@@ -25,12 +25,16 @@ blogsRouter.get("/:id", async (request, response) => {
 
 blogsRouter.post("/", async (request, response) => {
   const body = request.body;
-  const user = await User.findById(body.userId)
   if (!body.title || !body.url) {
     return response.status(400).json({
       error: "title and/or url missing",
     });
   } // checks for more bad values like: null, undefined, NaN, empty string, 0, false
+  
+  // const user = await User.findById(body.userId)
+  const randomUser = await User.findOne(); // get the first user
+  const user = randomUser; // use the first user
+  
   const entry = new Blog({
     title: body.title,
     author: body.author,
