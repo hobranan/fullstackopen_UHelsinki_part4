@@ -55,28 +55,28 @@ content-type: application/json
 ### pass (above with token)
 POST http://localhost:3003/api/blogs HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IndlcndlciByb29vdG90b3R0byIsImlkIjoiNjZlNzU2Y2IwMDNjYzU1MWNlNGEyMDc5IiwiaWF0IjoxNzI2NDM4OTEzfQ.MnmodGwi5DZt3apZs9t0SCZB1jh4YRKQ2u8TESOOsZ8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IndlcndlciByb29vdG90b3R0byIsImlkIjoiNjZlNzU2Y2IwMDNjYzU1MWNlNGEyMDc5IiwiaWF0IjoxNzI2NDQwMTUyfQ.xcUx10CbM2f-pSC7-yxHdd1MZZu31YydZa1DREohqcc
 
 {
-    "title": "bearerers title",
-    "author": "the uknown bear herp",
-    "url": "https://www.gosverye2.com",
-    "likes": 111,
-    "userId": "rando22432"
+    "title": "bearerers title3",
+    "author": "the uknown bear herp3",
+    "url": "https://www.gosverye23.com",
+    "likes": 1113,
+    "userId": "rando224332"
 }
 
 # checking the api/blogs endpoint:
 #   ...{
-#     "title": "bearerers title",
-#     "author": "the uknown bear herp",
-#     "url": "https://www.gosverye2.com",
-#     "likes": 111,
-#     "user": {
-#       "username": "werwer roootototto",
-#       "name": "werrduuuerper suer",
-#       "id": "66e756cb003cc551ce4a2079"
-#     },
-#     "id": "66e75e1bd3526fad538c3224"
+    # "title": "bearerers title3",
+    # "author": "the uknown bear herp3",
+    # "url": "https://www.gosverye23.com",
+    # "likes": 1113,
+    # "user": {
+    #   "username": "werwer roootototto",
+    #   "name": "werrduuuerper suer",
+    #   "id": "66e756cb003cc551ce4a2079"
+    # },
+    # "id": "66e762f0fb5c3ea8393fd6ae"
 #   },...
 
 ### fail (above with bad token)

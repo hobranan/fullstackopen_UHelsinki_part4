@@ -5,7 +5,19 @@ morgan.token("content", function (req) {
   return JSON.stringify(req.body);
 }); // custom token to log the body of the request
 
+
+const tokenExtractor = (request, response, next) => {
+  const authorization = request.get("authorization");
+  if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
+    request.token = authorization.substring("Bearer ".length);
+  } else {
+    request.token = null;
+  }
+  next(); // call the next middleware
+};
+
 module.exports = {
   cors,
   morgan,
+  tokenExtractor,
 };

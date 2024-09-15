@@ -15,6 +15,7 @@ app.use(
 ); // example output: POST /api/persons 200 58 - 4.794 ms {"name":"sample Name","number":"123-4458"}
 app.use(express.static("dist")); // this is a 'static' middleware that serves static files from the 'dist' folder,...
 // ...ref: https://fullstackopen.com/en/part3/deploying_app_to_internet#serving-static-files-from-the-backend
+app.use(beforeroute_middleware.tokenExtractor); // this is a custom middleware that extracts the token from the request
 
 //* routes moved to controllers/person.js
 const blogsRouter = require("./controllers/blogs");
