@@ -19,3 +19,8 @@ npm install eslint @eslint/js --save-dev
 npm install @stylistic/eslint-plugin-js --save-dev
 npm update
 npm run dev
+
+
+ctrl+c
+npm install cross-env
+npm install supertest --save-dev

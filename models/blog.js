@@ -39,12 +39,12 @@ const blogSchema = new mongoose.Schema({
   url: String,
   likes: Number,
 });
-// blogSchema.set("toJSON", {
-//   transform: (document, returnedObject) => {
-//     returnedObject.id = returnedObject._id.toString(); // converts mongoDB's '_id' to our '.id'
-//     delete returnedObject._id;
-//     delete returnedObject.__v;
-//   },
-// });
+blogSchema.set("toJSON", {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString(); // converts mongoDB's '_id' to our '.id'
+    // delete returnedObject._id;
+    delete returnedObject.__v;
+  },
+});
 
 module.exports = mongoose.model("Blog", blogSchema); // mongodb Atlas sees plural lowercase form of this
