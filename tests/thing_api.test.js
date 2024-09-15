@@ -1,4 +1,5 @@
 const { before, test, after } = require("node:test");
+const helper = require("./test_helper");
 const assert = require("node:assert");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
@@ -6,27 +7,21 @@ const app = require("../app");
 const api = supertest(app.app); // supertest uses app.js, but doesn't need index.js port listener because it's internally handled
 
 const Blog = require("../models/blog");
-const initialBlogs = [
-  {
-    title: "HTML is easy",
-    author: "John Doe",
-    url: "https://www.example.com",
-    likes: 5,
-  },
-  {
-    title: "Browser can execute only Javascript",
-    author: "Bill Turner",
-    url: "https://www.weathernews.com",
-    likes: 25,
-  },
-];
 
 before(async () => {
   await Blog.deleteMany({});
-  let blogObject = new Blog(initialBlogs[0]);
-  await blogObject.save();
-  blogObject = new Blog(initialBlogs[1]);
-  await blogObject.save();
+  console.log("cleared");
+
+  // const entries = helper.initialBlogs.map((item) => new Blog(item));
+  // const promiseArray = entries.map((item) => item.save());
+  // await Promise.all(promiseArray); // good for parallel processing
+  // console.log("done");
+
+  for (let item of helper.initialBlogs) {
+    let entry = new Blog(item)
+    await entry.save()
+  } // good for in-order processing
+  console.log("done");
 });
 
 test("entries are returned as json", async () => {
@@ -38,7 +33,7 @@ test("entries are returned as json", async () => {
 
 test("count entries: 2", async () => {
   const response = await api.get("/api/blogs");
-  assert.strictEqual(response.body.length, initialBlogs.length);
+  assert.strictEqual(response.body.length, helper.initialBlogs.length);
 });
 
 test("verify unique id", async () => {
@@ -52,7 +47,7 @@ test("verify unique id", async () => {
 
 test("post to blogs, new count, and get that post", async () => {
   const check = await api.get("/api/blogs");
-  assert.strictEqual(check.body.length, initialBlogs.length);
+  assert.strictEqual(check.body.length, helper.initialBlogs.length);
   const response = await api.post("/api/blogs").send({
     title: "test post",
     author: "Jill dill",
@@ -62,12 +57,33 @@ test("post to blogs, new count, and get that post", async () => {
   const check_id = response.body.id;
   assert.strictEqual(response.status, 201);
   const check2 = await api.get("/api/blogs");
-  assert.strictEqual(check2.body.length, initialBlogs.length + 1);
+  assert.strictEqual(check2.body.length, helper.initialBlogs.length + 1);
   const check3 = await api.get("/api/blogs/" + check_id);
   assert.strictEqual(check3.body.title, "test post");
   assert.strictEqual(check3.body.author, "Jill dill");
   assert.strictEqual(check3.body.url, "https://www.marytom.com");
   assert.strictEqual(check3.body.likes, 31);
+});
+
+test("post, check, then delete", async () => {
+  const response = await api.post("/api/blogs").send({
+    title: "the delete post",
+    author: "deletoormon",
+    url: "https://www.togrow.com",
+    likes: 45,
+  });
+  const check_id = response.body.id;
+  assert.strictEqual(response.status, 201);
+  const check1 = await api.get("/api/blogs/" + check_id);
+  assert.strictEqual(check1.body.title, "the delete post");
+  assert.strictEqual(check1.body.author, "deletoormon");
+  assert.strictEqual(check1.body.url, "https://www.togrow.com");
+  assert.strictEqual(check1.body.likes, 45);
+
+  const response2 = await api.delete("/api/blogs/" + check_id);
+  assert.strictEqual(response2.status, 204);
+  const check2 = await api.get("/api/blogs/" + check_id);
+  assert.strictEqual(check2.status, 404); // 404 = not found
 });
 
 test("post to blogs with likes and without", async () => {

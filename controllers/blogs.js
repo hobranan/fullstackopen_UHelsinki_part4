@@ -54,17 +54,10 @@ blogsRouter.post("/", async (request, response) => {
 //     .catch((error) => next(error))
 // }) // check requests/update***.rest files for testing
 
-// blogsRouter.delete('/:id', (request, response, next) => {
-//   Blog.findByIdAndDelete(request.params.id)
-//     .then(() => {
-//       response.status(204).end()
-//     })
-//     .catch((error) => next(error))
-// })
-// blogsRouter.delete('/:id', async (request, response) => {
-//   await Blog.findByIdAndDelete(request.params.id)
-//   response.status(204).end()
-// }) // check requests/delete***.rest files for testing
+blogsRouter.delete('/:id', async (request, response) => {
+  await Blog.findByIdAndDelete(request.params.id)
+  response.status(204).end()
+}) // check requests/delete***.rest files for testing
 
 // blogsRouter.get('/info', (request, response, next) => {
 //   Blog.countDocuments({})
