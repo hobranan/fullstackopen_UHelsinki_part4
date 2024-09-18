@@ -9,7 +9,7 @@ logger.info("connecting to", url);
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 db.on("error", (error) => {
-  logger.info("error connecting to MongoDB:", error.message);
+  logger.error("error connecting to MongoDB:", error.message);
 });
 db.once("open", () => {
   logger.info("connected to MongoDB");

@@ -1,20 +1,44 @@
 const Blog = require("../models/blog");
 const User = require('../models/user');
 
-const initialBlogs = [
-  {
-    title: "HTML is easy",
-    author: "John Doe",
-    url: "https://www.example.com",
-    likes: 5,
-  },
-  {
-    title: "Browser can execute only Javascript",
-    author: "Bill Turner",
-    url: "https://www.weathernews.com",
-    likes: 25,
-  },
-];
+// const initialBlogs = [
+//   {
+//     title: "HTML is easy",
+//     author: "John Doe",
+//     url: "https://www.example.com",
+//     likes: 5,
+//   },
+//   {
+//     title: "Browser can execute only Javascript",
+//     author: "Bill Turner",
+//     url: "https://www.weathernews.com",
+//     likes: 25,
+//   },
+// ];
+
+// const adv_user1_initialBlogs = [
+//   {
+//     title: "HTML is hard",
+//     author: "John Doerrg",
+//     url: "https://www.example12.com",
+//     likes: 5,
+//   },
+//   {
+//     title: "Bowser can execute only criminals",
+//     author: "Bill Dotreev",
+//     url: "https://www.weathernews12.com",
+//     likes: 25,
+//   },
+// ];
+
+// const adv_user2_initialBlogs = [
+//   {
+//     title: "The bees are running",
+//     author: "Whitehorn Paul",
+//     url: "https://www.dogsfillcats.com",
+//     likes: 44,
+//   },
+// ];
 
 // const nonExistingId = async () => {
 //   const entry = new Blog(
@@ -29,10 +53,10 @@ const initialBlogs = [
 //   return entry._id.toString()
 // }
 
-// const entriesInDb = async () => {
-//   const entry = await Blog.find({})
-//   return entry.map(item => item.toJSON())
-// }
+const blogs_InDb = async () => {
+  const entry = await Blog.find({})
+  return entry.map(item => item.toJSON())
+}
 
 const usersInDb = async () => {
   const users = await User.find({});
@@ -40,8 +64,10 @@ const usersInDb = async () => {
 };
 
 module.exports = {
-    initialBlogs, 
+    // initialBlogs, 
+    // adv_user1_initialBlogs,
+    // adv_user2_initialBlogs,
     // nonExistingId,
-    // entriesInDb,
+    blogs_InDb,
     usersInDb
 }

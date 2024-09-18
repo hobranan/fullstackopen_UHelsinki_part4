@@ -1,0 +1,78 @@
+### npm run dev
+
+GET http://localhost:3003/api/blogs
+
+
+
+###
+GET http://localhost:3003/api/blogs/66eb2f073849cb17ed123f65
+
+
+
+### 
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+    "title": "rando rest title 3",
+    "author": "the uknown hero 3",
+    "url": "https://www.gosegoose3.com",
+    "likes": 333,
+    "username": "therealtom"
+}
+
+# {
+#   "title": "rando rest title 3",
+#   "author": "the uknown hero 3",
+#   "url": "https://www.gosegoose3.com",
+#   "likes": 333,
+#   "user_id": {
+#     "username": "therealtom",
+#     "name": "Tom Verygood",
+#     "id": "66eb2626632e9316c4179c65"
+#   },
+#   "id": "66eb2f073849cb17ed123f65"
+# }
+
+### 
+PUT http://localhost:3003/api/blogs/66eb2f073849cb17ed123f65 HTTP/1.1
+content-type: application/json
+
+{
+    "title": "rando rest title 33",
+    "author": "the uknown hero 33",
+    "url": "https://www.gosegoose33.com",
+    "likes": 3330000,
+    "username": "therealtom"
+}
+
+# {
+#   "title": "rando rest title 33",
+#   "author": "the uknown hero 33",
+#   "url": "https://www.gosegoose33.com",
+#   "likes": 3330000,
+#   "user_id": {
+#     "username": "therealtom",
+#     "name": "Tom Verygood",
+#     "id": "66eb2626632e9316c4179c65"
+#   },
+#   "id": "66eb2f073849cb17ed123f65"
+# }
+
+### 
+DELETE http://localhost:3003/api/blogs/66eb2f073849cb17ed123f65 HTTP/1.1
+
+# Response:
+# HTTP/1.1 204 No Content
+# X-Powered-By: Express
+# Access-Control-Allow-Origin: *
+# Date: Wed, 18 Sep 2024 19:54:59 GMT
+# Connection: close
+
+# Response again:
+# HTTP/1.1 404 Not Found
+# X-Powered-By: Express
+# Access-Control-Allow-Origin: *
+# Date: Wed, 18 Sep 2024 19:55:18 GMT
+# Connection: close
+# Content-Length: 0

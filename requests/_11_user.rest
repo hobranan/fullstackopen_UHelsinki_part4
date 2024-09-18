@@ -1,0 +1,64 @@
+### npm run dev
+
+GET http://localhost:3003/api/users
+
+
+
+###
+GET http://localhost:3003/api/users/66eb2626632e9316c4179c65
+
+
+
+### 
+POST http://localhost:3003/api/users HTTP/1.1
+content-type: application/json
+
+{
+    "username": "postythepostmancometh",
+    "name": "Posty John Posterboy",
+    "password": "post John Posterboy"
+}
+
+# Response:
+# HTTP/1.1 201 Created
+# X-Powered-By: Express
+# Access-Control-Allow-Origin: *
+# Content-Type: application/json; charset=utf-8
+# Content-Length: 98
+# ETag: W/"62-nmq2wF1SO4TzQFrMLRQ0oUdNuSA"
+# Date: Tue, 17 Sep 2024 23:32:03 GMT
+# Connection: close
+# 
+# {
+#   "username": "thepostmancometh",
+#   "name": "John Posterboy",
+#   "blogs": [],
+#   "id": "66ea11738888d58a2b9a9e8a"
+# }
+
+### 
+PUT http://localhost:3003/api/users/66ea22eb670a97088be5a97a HTTP/1.1
+content-type: application/json
+
+{
+    "username": "postythepostmancometh2",
+    "name": "Posty John Posterboy two",
+    "password": "youwillnotguessyoutoo"
+}
+
+# Response:
+# HTTP/1.1 200 OK
+# X-Powered-By: Express
+# Access-Control-Allow-Origin: *
+# Content-Type: application/json; charset=utf-8
+# Content-Length: 103
+# ETag: W/"67-P7MFeGASdVp+qbuEY7QwIt/vvBc"
+# Date: Tue, 17 Sep 2024 23:45:56 GMT
+# Connection: close
+# 
+# {
+#   "username": "thepostmancometh2",
+#   "name": "John Posterboy 2nd",
+#   "blogs": [],
+#   "id": "66ea11738888d58a2b9a9e8a"
+# }
