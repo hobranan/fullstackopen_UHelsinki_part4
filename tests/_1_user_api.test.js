@@ -194,6 +194,8 @@ describe("empty db, basic User functionality", () => {
     const check_id = response2.body.id;
     assert.strictEqual(response2.status, 201);
     const check1 = await api.get("/api/blogs/" + check_id);
+    // console.log("check1:", check1);
+    // console.log("check1.body:", check1.body);
     assert.strictEqual(check1.body.title, "the delete post2");
     assert.strictEqual(check1.body.author, "deletoormon2");
     assert.strictEqual(check1.body.url, "https://www.to2grow.com");

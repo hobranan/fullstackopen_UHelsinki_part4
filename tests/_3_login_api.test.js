@@ -230,20 +230,20 @@ describe("empty db, basic User functionality", () => {
     assert.strictEqual(result2.status, 201);
 
     const updatedBlog_fromRandomGuy = {
-      title: "The cats are running dont change",
-      author: "Blackbilled Paul dont chnage",
-      url: "https://www.dogsbitechnage.com",
-      likes: 434534,
+      title: "The cats are running i try change",
+      author: "Blackbilled Paul i try chnage",
+      url: "https://www.dogsbitechnagethis.com",
+      likes: 4345343424,
       username: newLogin.username,
     };
     const result3 = await api
       .put("/api/blogs/" + result2.body.id)
-      .send(updatedBlog_fromRandomGuy);
+      .send(updatedBlog_fromRandomGuy); // no auth header
     assert.strictEqual(result3.status, 401);
 
     const result4 = await api
       .delete("/api/blogs/" + result2.body.id)
-      .send(updatedBlog_fromRandomGuy);
+      .send(updatedBlog_fromRandomGuy); // no auth header
     assert.strictEqual(result4.status, 401);
   });
 

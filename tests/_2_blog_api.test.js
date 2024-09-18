@@ -131,7 +131,17 @@ describe("empty db, basic Blog functionality", () => {
   // });
 
   test("post to blogs: failing, without title", async () => {
-    const response1 = await api.post("/api/blogs").send({
+    const login = {
+      username: "bnoname",
+      password: "this is mysekret",
+    };
+    const result = await api.post("/api/login").send(login);
+    assert.strictEqual(result.status, 200);
+
+    const response1 = await api
+    .post("/api/blogs")
+    .set("Authorization", `Bearer ${result.body.token}`)
+    .send({
       author: "Jill dillernoauth",
       url: "https://www.marytomernoauth.com",
       likes: 5000,
@@ -141,7 +151,17 @@ describe("empty db, basic Blog functionality", () => {
   });
 
   test("post to blogs: failing, without url", async () => {
-    const response2 = await api.post("/api/blogs").send({
+    const login = {
+      username: "bnoname",
+      password: "this is mysekret",
+    };
+    const result = await api.post("/api/login").send(login);
+    assert.strictEqual(result.status, 200);
+
+    const response2 = await api
+    .post("/api/blogs")
+    .set("Authorization", `Bearer ${result.body.token}`)
+    .send({
       title: "ttttttttttt",
       author: "Jill nourl",
       likes: 888,

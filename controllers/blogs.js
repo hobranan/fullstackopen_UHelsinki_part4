@@ -1,8 +1,9 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog"); // this is a 'mongoose' model that represents a blog in the phonebook
 const User = require("../models/user"); // this is a 'mongoose' model that represents a user in the phonebook
-const jwt = require("jsonwebtoken");
 const logger = require("../utils/logger");
+const beforemiddleware = require("../utils/beforemiddleware");
+//* use the beforemiddleware.userExtractor only in specific /api/blogs routes of: POST, PUT, DELETE
 
 blogsRouter.get("/", async (request, response) => {
   const result = await Blog.find({}).populate("user_id", {
@@ -28,7 +29,7 @@ blogsRouter.get("/:id", async (request, response) => {
 // http://localhost:3003/api/blogs/66e4d4c87900000000000000 for fail 404 example
 // http://localhost:3003/api/blogs/66e4d4c879 for fail 400 example {"error":"malformatted id"}
 
-blogsRouter.post("/", async (request, response) => {
+blogsRouter.post("/", beforemiddleware.userExtractor, async (request, response) => {
   const { title, author, url, likes, username } = request.body;
   if (!title || !url) {
     logger.error("title and/or url missing");
@@ -54,19 +55,14 @@ blogsRouter.post("/", async (request, response) => {
 
   // associate the blog entry with the username who has a token
   // make sure token is valid, the user holding the token is the same as the username on the post
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  // logger.info("decodedToken", decodedToken);
-  if (!decodedToken.id) {
-    logger.error("token invalid");
-    return response.status(401).json({ error: 'token invalid' })
+  if (request.user.username !== username) {
+    console.log("request.user", request.user);
+    console.log("username", username);
+    // * not sure if this is best way of verifying a post (or even needed at all)
+    logger.error("posting: username does not hold auth");
+    return response.status(401).json({ error: "username does not hold auth" });
   }
-  const token_user = await User.findById(decodedToken.id)
-  // logger.info("token_user", token_user);
-  if (token_user.username !== username) { // * not sure if this is best way of verifying a post (or even needed at all)
-    logger.error("username does not hold auth");
-    return response.status(401).json({ error: 'username does not hold auth' })
-  }
-  const user = token_user;
+  const user = request.user;
 
   const entry = new Blog({
     title: title,
@@ -79,15 +75,18 @@ blogsRouter.post("/", async (request, response) => {
   user.blogs = user.blogs.concat(result._id || result.id);
   // logger.info("user.blogs", user.blogs);
   await user.save();
-  const item = await Blog.findById(result._id || result.id).populate("user_id", {
-    username: 1,
-    name: 1,
-  });
+  const item = await Blog.findById(result._id || result.id).populate(
+    "user_id",
+    {
+      username: 1,
+      name: 1,
+    }
+  );
   response.status(201).json(item);
 });
 // check requests/create***.rest files for testing
 
-blogsRouter.put("/:id", async (request, response) => {
+blogsRouter.put("/:id", beforemiddleware.userExtractor, async (request, response) => {
   const { title, author, url, likes, username } = request.body;
   if (!title || !url) {
     logger.error("title and/or url missing");
@@ -113,19 +112,14 @@ blogsRouter.put("/:id", async (request, response) => {
 
   // associate the blog entry with the username who has a token
   // make sure token is valid, the user holding the token is the same as the username on the post
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  // logger.info("decodedToken", decodedToken);
-  if (!decodedToken.id) {
-    logger.error("token invalid");
-    return response.status(401).json({ error: 'token invalid' })
-  }
   const referenced_blog = await Blog.findById(request.params.id); // not 'toJSON' format
-  const token_user = await User.findById(decodedToken.id) // not 'toJSON' format
+  const token_user = request.user; // not 'toJSON' format
   // logger.info("token_user", token_user);
   // logger.info("referenced_blog", referenced_blog);
-  if (token_user._id.toString() !== referenced_blog.user_id.toString()) { // not 'toJSON' format
-    logger.error("username does not hold auth");
-    return response.status(401).json({ error: 'username does not hold auth' })
+  if (token_user._id.toString() !== referenced_blog.user_id.toString()) {
+    // not 'toJSON' format
+    logger.error("putting: username does not hold auth");
+    return response.status(401).json({ error: "username does not hold auth" });
   }
   const user = token_user;
 
@@ -156,23 +150,17 @@ blogsRouter.put("/:id", async (request, response) => {
 });
 // check requests/update***.rest files for testing
 
-blogsRouter.delete("/:id", async (request, response) => {
-
+blogsRouter.delete("/:id", beforemiddleware.userExtractor, async (request, response) => {
   // associate the blog entry with the username who has a token
   // make sure token is valid, the user holding the token is the same as the username on the post
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  // logger.info("decodedToken", decodedToken);
-  if (!decodedToken.id) {
-    logger.error("token invalid");
-    return response.status(401).json({ error: 'token invalid' })
-  }
   const referenced_blog = await Blog.findById(request.params.id); // not 'toJSON' format
-  const token_user = await User.findById(decodedToken.id) // not 'toJSON' format
+  const token_user = request.user; // not 'toJSON' format
   // logger.info("token_user", token_user);
   // logger.info("referenced_blog", referenced_blog);
-  if (token_user._id.toString() !== referenced_blog.user_id.toString()) { // not 'toJSON' format
-    logger.error("username does not hold auth");
-    return response.status(401).json({ error: 'username does not hold auth' })
+  if (token_user._id.toString() !== referenced_blog.user_id.toString()) {
+    // not 'toJSON' format
+    logger.error("deleting: username does not hold auth");
+    return response.status(401).json({ error: "username does not hold auth" });
   }
   const user = token_user;
 

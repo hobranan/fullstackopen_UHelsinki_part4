@@ -17,9 +17,10 @@ app.use(express.static("dist")); // this is a 'static' middleware that serves st
 // ...ref: https://fullstackopen.com/en/part3/deploying_app_to_internet#serving-static-files-from-the-backend
 app.use(beforeroute_middleware.tokenExtractor); // this is a custom middleware that extracts the token from the request
 
-//* routes moved to controllers/person.js
+//* routes moved to 'controllers' folder
 const blogsRouter = require("./controllers/blogs");
-app.use("/api/blogs", blogsRouter); // this is a 'Express router' middleware that uses the routes defined in 'controllers/person.js'
+//* use the beforemiddleware.userExtractor only in specific /api/blogs routes of: POST, PUT, DELETE
+app.use("/api/blogs", blogsRouter); // this is a 'Express router' middleware that uses the routes defined in 'controllers/blogs.js'
 const usersRouter = require("./controllers/users");
 app.use("/api/users", usersRouter); // this is a 'Express router' middleware that uses the routes defined in 'controllers/users.js'
 const loginRouter = require("./controllers/login");
