@@ -19,7 +19,7 @@ describe("empty db, basic Blog functionality", () => {
 
     await User.updateMany({}, { $set: { blogs: [] } });
     console.log("cleared all users' blogs in user collection");
-    
+
     // const entries = helper.initialBlogs.map((item) => new Blog(item));
     // const promiseArray = entries.map((item) => item.save());
     // await Promise.all(promiseArray); // good for parallel processing
@@ -34,6 +34,13 @@ describe("empty db, basic Blog functionality", () => {
   });
 
   test("post new blog: passing", async () => {
+    const login = {
+      username: "bnoname",
+      password: "this is mysekret",
+    };
+    const result = await api.post("/api/login").send(login);
+    assert.strictEqual(result.status, 200);
+
     const blogsAtStart = await helper.blogs_InDb();
     assert.strictEqual(blogsAtStart.length, 0);
     const newBlog = {
@@ -45,6 +52,7 @@ describe("empty db, basic Blog functionality", () => {
     };
     await api
       .post("/api/blogs")
+      .set("Authorization", `Bearer ${result.body.token}`)
       .send(newBlog)
       .expect(201)
       .expect("Content-Type", /application\/json/);
@@ -62,6 +70,13 @@ describe("empty db, basic Blog functionality", () => {
   });
 
   test("post 2 more blogs: passing", async () => {
+    const login = {
+      username: "bnoname",
+      password: "this is mysekret",
+    };
+    const result = await api.post("/api/login").send(login);
+    assert.strictEqual(result.status, 200);
+
     const blogsAtStart = await helper.blogs_InDb();
     const newBlog = {
       title: "HTML is easy",
@@ -72,11 +87,20 @@ describe("empty db, basic Blog functionality", () => {
     };
     await api
       .post("/api/blogs")
+      .set("Authorization", `Bearer ${result.body.token}`)
       .send(newBlog)
       .expect(201)
       .expect("Content-Type", /application\/json/);
     const blogsAtEnd1 = await helper.blogs_InDb();
     assert.strictEqual(blogsAtEnd1.length, blogsAtStart.length + 1);
+
+    const login2 = {
+      username: "therealtom",
+      password: "nopeimgood",
+    };
+    const result2 = await api.post("/api/login").send(login2);
+    assert.strictEqual(result2.status, 200);
+
     const newBlog2 = {
       title: "Browser can execute only Javascript",
       author: "Bill Turner",
@@ -86,6 +110,7 @@ describe("empty db, basic Blog functionality", () => {
     };
     await api
       .post("/api/blogs")
+      .set("Authorization", `Bearer ${result2.body.token}`)
       .send(newBlog2)
       .expect(201)
       .expect("Content-Type", /application\/json/);
@@ -126,14 +151,24 @@ describe("empty db, basic Blog functionality", () => {
   });
 
   test("post to blogs, new count, and get that post: passing", async () => {
-    const check_blogs_length = await helper.blogs_InDb();
-    const response = await api.post("/api/blogs").send({
-      title: "test post to get",
-      author: "Jack sparrow",
-      url: "https://www.piratesofmars.com",
-      likes: 31,
+    const login = {
       username: "bnoname",
-    });
+      password: "this is mysekret",
+    };
+    const result = await api.post("/api/login").send(login);
+    assert.strictEqual(result.status, 200);
+
+    const check_blogs_length = await helper.blogs_InDb();
+    const response = await api
+      .post("/api/blogs")
+      .set("Authorization", `Bearer ${result.body.token}`)
+      .send({
+        title: "test post to get",
+        author: "Jack sparrow",
+        url: "https://www.piratesofmars.com",
+        likes: 31,
+        username: "bnoname",
+      });
     const check_id = response.body.id;
     assert.strictEqual(response.status, 201);
     const check2_blogs_length = await helper.blogs_InDb();
@@ -149,13 +184,23 @@ describe("empty db, basic Blog functionality", () => {
   });
 
   test("post to blogs with likes and without: passing", async () => {
-    const response1 = await api.post("/api/blogs").send({
-      title: "the liked post",
-      author: "The only person",
-      url: "https://www.marymarymary.com",
-      likes: 100,
+    const login = {
       username: "bnoname",
-    });
+      password: "this is mysekret",
+    };
+    const result = await api.post("/api/login").send(login);
+    assert.strictEqual(result.status, 200);
+
+    const response1 = await api
+      .post("/api/blogs")
+      .set("Authorization", `Bearer ${result.body.token}`)
+      .send({
+        title: "the liked post",
+        author: "The only person",
+        url: "https://www.marymarymary.com",
+        likes: 100,
+        username: "bnoname",
+      });
     const check_id1 = response1.body.id;
     assert.strictEqual(response1.status, 201);
     const receive_check1 = await api.get("/api/blogs/" + check_id1);
@@ -164,13 +209,16 @@ describe("empty db, basic Blog functionality", () => {
     assert.strictEqual(receive_check1.body.url, "https://www.marymarymary.com");
     assert.strictEqual(receive_check1.body.likes, 100);
 
-    const response2 = await api.post("/api/blogs").send({
-      title: "the not liked post",
-      author: "The only person",
-      url: "https://www.marymarymary.com",
-      username: "bnoname",
-      // likes: 100, // defaults to 0 if missing
-    });
+    const response2 = await api
+      .post("/api/blogs")
+      .set("Authorization", `Bearer ${result.body.token}`)
+      .send({
+        title: "the not liked post",
+        author: "The only person",
+        url: "https://www.marymarymary.com",
+        username: "bnoname",
+        // likes: 100, // defaults to 0 if missing
+      });
     const check_id2 = response2.body.id;
     assert.strictEqual(response2.status, 201);
     const receive_check2 = await api.get("/api/blogs/" + check_id2);
@@ -181,13 +229,23 @@ describe("empty db, basic Blog functionality", () => {
   });
 
   test("post new blog, then update/put it: passing", async () => {
-    const response = await api.post("/api/blogs").send({
-      title: "the update post",
-      author: "updatooooros",
-      url: "https://www.youneedupdate.com",
-      likes: 90,
+    const login2 = {
       username: "therealtom",
-    });
+      password: "nopeimgood",
+    };
+    const result2 = await api.post("/api/login").send(login2);
+    assert.strictEqual(result2.status, 200);
+
+    const response = await api
+      .post("/api/blogs")
+      .set("Authorization", `Bearer ${result2.body.token}`)
+      .send({
+        title: "the update post",
+        author: "updatooooros",
+        url: "https://www.youneedupdate.com",
+        likes: 90,
+        username: "therealtom",
+      });
     const check_id = response.body.id;
     assert.strictEqual(response.status, 201);
     const check1 = await api.get("/api/blogs/" + check_id);
@@ -196,13 +254,16 @@ describe("empty db, basic Blog functionality", () => {
     assert.strictEqual(check1.body.url, "https://www.youneedupdate.com");
     assert.strictEqual(check1.body.likes, 90);
 
-    const response2 = await api.put("/api/blogs/" + check_id).send({
-      title: "the update post",
-      author: "updatooooros",
-      url: "https://www.youneedupdate.com",
-      likes: 999999, // update likes
-      username: "therealtom",
-    });
+    const response2 = await api
+      .put("/api/blogs/" + check_id)
+      .set("Authorization", `Bearer ${result2.body.token}`)
+      .send({
+        title: "the update post",
+        author: "updatooooros",
+        url: "https://www.youneedupdate.com",
+        likes: 999999, // update likes
+        username: "therealtom",
+      });
     assert.strictEqual(response2.status, 200);
     const check2 = await api.get("/api/blogs/" + check_id);
     assert.strictEqual(check2.body.title, "the update post");
@@ -212,13 +273,23 @@ describe("empty db, basic Blog functionality", () => {
   });
 
   test("post new blog, check, then delete: passing", async () => {
-    const response = await api.post("/api/blogs").send({
-      title: "the delete post",
-      author: "deletoormon",
-      url: "https://www.togrow.com",
-      likes: 45,
+    const login2 = {
       username: "therealtom",
-    });
+      password: "nopeimgood",
+    };
+    const result2 = await api.post("/api/login").send(login2);
+    assert.strictEqual(result2.status, 200);
+
+    const response = await api
+      .post("/api/blogs")
+      .set("Authorization", `Bearer ${result2.body.token}`)
+      .send({
+        title: "the delete post",
+        author: "deletoormon",
+        url: "https://www.togrow.com",
+        likes: 45,
+        username: "therealtom",
+      });
     const check_id = response.body.id;
     assert.strictEqual(response.status, 201);
     const check1 = await api.get("/api/blogs/" + check_id);
@@ -227,7 +298,9 @@ describe("empty db, basic Blog functionality", () => {
     assert.strictEqual(check1.body.url, "https://www.togrow.com");
     assert.strictEqual(check1.body.likes, 45);
 
-    const response2 = await api.delete("/api/blogs/" + check_id);
+    const response2 = await api
+      .delete("/api/blogs/" + check_id)
+      .set("Authorization", `Bearer ${result2.body.token}`);
     assert.strictEqual(response2.status, 204);
     const check2 = await api.get("/api/blogs/" + check_id);
     assert.strictEqual(check2.status, 404); // 404 = not found

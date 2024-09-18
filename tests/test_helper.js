@@ -63,11 +63,20 @@ const usersInDb = async () => {
   return users.map((u) => u.toJSON());
 };
 
+const createFakeToken = (realToken, amountToChange) => {
+  const lastChars = realToken.slice(-amountToChange).split('').map(char => {
+    return char === char.toUpperCase() ? char.toLowerCase() : char.toUpperCase();
+  }).join('');
+  const fakeToken = realToken.slice(0, -amountToChange) + lastChars;
+  return fakeToken;
+}
+
 module.exports = {
     // initialBlogs, 
     // adv_user1_initialBlogs,
     // adv_user2_initialBlogs,
     // nonExistingId,
     blogs_InDb,
-    usersInDb
+    usersInDb,
+    createFakeToken,
 }

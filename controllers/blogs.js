@@ -43,26 +43,30 @@ blogsRouter.post("/", async (request, response) => {
   // const user = randomUser;
 
   // associate the blog entry with the given username
-  const check_user_exists = await User.findOne({ username: username });
-  if (!check_user_exists) {
-    logger.error("Username does not exist");
-    return response.status(404).json({
-      error: "Username does not exist",
-    });
-  }
-  const user = check_user_exists;
+  // const check_user_exists = await User.findOne({ username: username });
+  // if (!check_user_exists) {
+  //   logger.error("Username does not exist");
+  //   return response.status(404).json({
+  //     error: "Username does not exist",
+  //   });
+  // }
+  // const user = check_user_exists;
 
-  // associate the blog entry with a username who has a token
-  // const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  // if (!decodedToken.id) {
-  //   return response.status(401).json({ error: 'token invalid' })
-  // }
-  // // const token_user = await User.findById(decodedToken.id)
-  // const token_user = await User.findOne({ username: decodedToken.username })
-  // if (token_user.username !== username) {
-  //   return response.status(401).json({ error: 'username does not hold auth' })
-  // }
-  // user = token_user;
+  // associate the blog entry with the username who has a token
+  // make sure token is valid, the user holding the token is the same as the username on the post
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  // logger.info("decodedToken", decodedToken);
+  if (!decodedToken.id) {
+    logger.error("token invalid");
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  const token_user = await User.findById(decodedToken.id)
+  // logger.info("token_user", token_user);
+  if (token_user.username !== username) { // * not sure if this is best way of verifying a post (or even needed at all)
+    logger.error("username does not hold auth");
+    return response.status(401).json({ error: 'username does not hold auth' })
+  }
+  const user = token_user;
 
   const entry = new Blog({
     title: title,
@@ -98,26 +102,32 @@ blogsRouter.put("/:id", async (request, response) => {
   // const user = randomUser;
 
   // associate the blog entry with the given username
-  const check_user_exists = await User.findOne({ username: username });
-  if (!check_user_exists) {
-    logger.error("Username does not exist");
-    return response.status(400).json({
-      error: "Username does not exist",
-    });
-  }
-  const user = check_user_exists;
+  // const check_user_exists = await User.findOne({ username: username });
+  // if (!check_user_exists) {
+  //   logger.error("Username does not exist");
+  //   return response.status(400).json({
+  //     error: "Username does not exist",
+  //   });
+  // }
+  // const user = check_user_exists;
 
-  // associate the blog entry with a username who has a token
-  // const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  // if (!decodedToken.id) {
-  //   return response.status(453).json({ error: 'token invalid' })
-  // }
-  // // const token_user = await User.findById(decodedToken.id)
-  // const token_user = await User.findOne({ username: decodedToken.username })
-  // if (token_user.username !== username) {
-  //   return response.status(454).json({ error: 'username does not hold auth' })
-  // }
-  // user = token_user;
+  // associate the blog entry with the username who has a token
+  // make sure token is valid, the user holding the token is the same as the username on the post
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  // logger.info("decodedToken", decodedToken);
+  if (!decodedToken.id) {
+    logger.error("token invalid");
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  const referenced_blog = await Blog.findById(request.params.id); // not 'toJSON' format
+  const token_user = await User.findById(decodedToken.id) // not 'toJSON' format
+  // logger.info("token_user", token_user);
+  // logger.info("referenced_blog", referenced_blog);
+  if (token_user._id.toString() !== referenced_blog.user_id.toString()) { // not 'toJSON' format
+    logger.error("username does not hold auth");
+    return response.status(401).json({ error: 'username does not hold auth' })
+  }
+  const user = token_user;
 
   const entry_obj = {
     title: title,
@@ -147,6 +157,25 @@ blogsRouter.put("/:id", async (request, response) => {
 // check requests/update***.rest files for testing
 
 blogsRouter.delete("/:id", async (request, response) => {
+
+  // associate the blog entry with the username who has a token
+  // make sure token is valid, the user holding the token is the same as the username on the post
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  // logger.info("decodedToken", decodedToken);
+  if (!decodedToken.id) {
+    logger.error("token invalid");
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  const referenced_blog = await Blog.findById(request.params.id); // not 'toJSON' format
+  const token_user = await User.findById(decodedToken.id) // not 'toJSON' format
+  // logger.info("token_user", token_user);
+  // logger.info("referenced_blog", referenced_blog);
+  if (token_user._id.toString() !== referenced_blog.user_id.toString()) { // not 'toJSON' format
+    logger.error("username does not hold auth");
+    return response.status(401).json({ error: 'username does not hold auth' })
+  }
+  const user = token_user;
+
   const blog = await Blog.findById(request.params.id);
   if (blog) {
     await Blog.findByIdAndDelete(request.params.id);

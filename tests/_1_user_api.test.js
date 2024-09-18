@@ -174,7 +174,17 @@ describe("empty db, basic User functionality", () => {
     const id = response.body.id;
     assert.strictEqual(username, newUser.username);
 
-    const response2 = await api.post("/api/blogs").send({
+    const login = {
+      username: newUser.username,
+      password: newUser.password,
+    };
+    const result = await api.post("/api/login").send(login);
+    assert.strictEqual(result.status, 200);
+
+    const response2 = await api
+    .post("/api/blogs")
+    .set("Authorization", `Bearer ${result.body.token}`)
+    .send({
       title: "the delete post2",
       author: "deletoormon2",
       url: "https://www.to2grow.com",
@@ -189,7 +199,10 @@ describe("empty db, basic User functionality", () => {
     assert.strictEqual(check1.body.url, "https://www.to2grow.com");
     assert.strictEqual(check1.body.likes, 45);
 
-    await api.delete(`/api/users/${id}`).send().expect(204);
+    const result2 = await api.delete(`/api/users/${id}`)
+    .set("Authorization", `Bearer ${result.body.token}`)
+    .send()
+    .expect(204);
     const response3 = await api.get("/api/users/" + id);
     assert.strictEqual(response3.status, 404);
     const usersAtEnd = await helper.usersInDb();
